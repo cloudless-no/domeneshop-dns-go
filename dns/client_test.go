@@ -30,7 +30,7 @@ func newTestEnv() testEnv {
 	server := httptest.NewServer(mux)
 	client := NewClient(
 		WithEndpoint(server.URL),
-		WithToken("32CharactersTokenxxxxxxxXxxxxxxx"),
+		WithCredentials("testuser", "testpassword"),
 		WithApplication("testing", Version),
 	)
 	return testEnv{
@@ -48,24 +48,6 @@ func TestClientEndpointTrailingSlashesRemoved(t *testing.T) {
 	}
 }
 
-func TestClientInvalidToken(t *testing.T) {
-	env := newTestEnv()
-	defer env.Teardown()
-
-	env.Client = NewClient(
-		WithEndpoint(env.Server.URL),
-		WithToken("32Charact3rsInvalidT@k3n!xxxxxxx"),
-	)
-
-	ctx := context.Background()
-	_, err := env.Client.NewRequest(ctx, "GET", "/", nil)
-
-	if nil == err {
-		t.Error("Failed to trigger expected error")
-	} else if err.Error() != "authorization token contains invalid characters" {
-		t.Fatalf("Invalid encoded authorization token triggered unexpected error message: %s", err)
-	}
-}
 
 func TestClientDo(t *testing.T) {
 	env := newTestEnv()
