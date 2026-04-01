@@ -10,5 +10,6 @@ const UserAgent = "domeneshop-dns/" + Version
 
 const (
 	pathDomains        = "/domains"
-	pathRecords        = "/dns"
+	pathRecords        = "dns"
+	pathFirstDomainRecords        = "/domains/1/dns"
 )

@@ -4,24 +4,20 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/http/httputil"
-	"regexp"
 	"strings"
 )
-
-var validTokenReg = regexp.MustCompile("[a-zA-Z0-9]{32}")
 
 // Client is the client for the Domeneshop DNS API.
 type Client struct {
 	httpClient         *http.Client
-	token              string
+	token           string
+	secret           string
 	endpoint           string
 	debugWriter        io.Writer
-	tokenValid         bool
 	applicationName    string
 	applicationVersion string
 	userAgent          string
@@ -33,11 +29,11 @@ type Client struct {
 // ClientOption is used to configure a client.
 type ClientOption func(*Client)
 
-// WithToken configures a client to use the specified token.
-func WithToken(token string) ClientOption {
+// WithCredentials configures a client to use the specified token and secret for Basic Auth.
+func WithCredentials(token, secret string) ClientOption {
 	return func(client *Client) {
 		client.token = token
-		client.tokenValid = validTokenReg.MatchString(token)
+		client.secret = secret
 	}
 }
 
@@ -76,7 +72,6 @@ func WithDebugWriter(wr io.Writer) ClientOption {
 func NewClient(options ...ClientOption) *Client {
 	client := &Client{
 		endpoint:   Endpoint,
-		tokenValid: true,
 		httpClient: http.DefaultClient,
 	}
 
@@ -102,10 +97,8 @@ func (c *Client) NewRequest(ctx context.Context, method, path string, body io.Re
 	}
 	req.Header.Set("User-Agent", c.userAgent)
 
-	if !c.tokenValid {
-		return nil, errors.New("authorization token contains invalid characters")
-	} else if c.token != "" {
-		req.Header.Set("Auth-API-Token", c.token)
+	if c.token != "" || c.secret != "" {
+		req.SetBasicAuth(c.token, c.secret)
 	}
 
 	if body != nil {

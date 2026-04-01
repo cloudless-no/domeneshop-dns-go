@@ -45,7 +45,7 @@ type DomainClient struct {
 
 // List returns all domains with the given parameters.
 func (c DomainClient) List(ctx context.Context) ([]*Domain, *Response, error) {
-	req, err := c.client.NewRequest(ctx, "GET", fmt.Sprintf("%s?%s", pathDomains), nil)
+	req, err := c.client.NewRequest(ctx, "GET", pathDomains, nil)
 	if err != nil {
 		return nil, nil, err
 	}

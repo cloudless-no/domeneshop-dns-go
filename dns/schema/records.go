@@ -25,7 +25,7 @@ type RecordResponse struct {
 // RecordCreateRequest defines a schema for the request to
 // create a record.
 type RecordCreateRequest struct {
-	Host   string `json:"name"`
+	Host   string `json:"host"`
 	Ttl    *int   `json:"ttl"`
 	Type   string `json:"type"`
 	Data  string `json:"data"`
@@ -35,7 +35,7 @@ type RecordCreateRequest struct {
 // RecordUpdateRequest defines a schema for the request to
 // update a record.
 type RecordUpdateRequest struct {
-	Host   string `json:"name"`
+	Host   string `json:"host"`
 	Ttl    *int   `json:"ttl"`
 	Type   string `json:"type"`
 	Data  string `json:"data"`

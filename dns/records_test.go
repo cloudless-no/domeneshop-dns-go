@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/cloudless-no/domeneshop-dns-go/dns/schema"
@@ -15,54 +16,39 @@ func TestRecordList(t *testing.T) {
 
 	as := newAssert(t)
 
-	env.Mux.HandleFunc(pathRecords, func(w http.ResponseWriter, r *http.Request) {
-		resp := schema.RecordListResponse{
-			Records: []schema.Record{
-				{
-					ID:     "1",
-					Type:   "A",
-					Host:   "domeneshop.cloud",
-					DomainID: "1",
-				},
-				{
-					ID:     "2",
-					Type:   "A",
-					Host:   "domeneshop.com",
-					DomainID: "2",
-				},
-				{
-					ID:     "3",
-					Type:   "A",
-					Host:   "dns.domeneshop.com",
-					DomainID: "2",
-				},
-			},
-		}
+	allRecords := []schema.Record{
+		{ID: "1", Type: "A", Host: "domeneshop.cloud", DomainID: "1"},
+		{ID: "2", Type: "A", Host: "domeneshop.com", DomainID: "2"},
+		{ID: "3", Type: "A", Host: "dns.domeneshop.com", DomainID: "2"},
+	}
 
-		switch r.URL.Query().Get("domain_id") {
-		case "1":
-			resp.Records = []schema.Record{resp.Records[0]}
-		case "3":
-			resp.Records = []schema.Record{}
+	// Register a handler for all /domains/{id}/dns paths
+	env.Mux.HandleFunc(fmt.Sprintf("%s/", pathDomains), func(w http.ResponseWriter, r *http.Request) {
+		domainID := strings.Split(r.URL.Path, "/")[2]
+		var records []schema.Record
+		for _, rec := range allRecords {
+			if rec.DomainID == domainID {
+				records = append(records, rec)
+			}
 		}
-
-		json.NewEncoder(w).Encode(resp) // nolint: errcheck
+		json.NewEncoder(w).Encode(schema.RecordListResponse{Records: records}) // nolint: errcheck
 	})
 
-	opts := RecordListOpts{}
-	domains, _, err := env.Client.Record.List(env.Context, opts)
-	as.NoError(err)
-	as.EqInt(3, len(domains))
-
-	opts.DomainID = "1"
-	domains, _, err = env.Client.Record.List(env.Context, opts)
-	as.NoError(err)
-	as.EqInt(1, len(domains))
-
-	opts.DomainID = "3"
-	domains, _, err = env.Client.Record.List(env.Context, opts)
-	as.NoError(err)
-	as.EqInt(0, len(domains))
+	cases := []struct {
+		domainID string
+		want     int
+	}{
+		{"1", 1},
+		{"2", 2},
+		{"3", 0},
+	}
+	for _, tc := range cases {
+		opts := RecordListOpts{DomainID: tc.domainID}
+		records, _, err := env.Client.Record.List(env.Context, opts)
+		if as.NoError(err) {
+			as.EqInt(tc.want, len(records))
+		}
+	}
 }
 
 func TestRecordGetByID(t *testing.T) {
@@ -71,7 +57,7 @@ func TestRecordGetByID(t *testing.T) {
 
 	as := newAssert(t)
 
-	env.Mux.HandleFunc(fmt.Sprintf("%s/1", pathRecords), func(w http.ResponseWriter, r *http.Request) {
+	env.Mux.HandleFunc(fmt.Sprintf("%s/%s/%s/1", pathDomains, "1", pathRecords), func(w http.ResponseWriter, r *http.Request) {
 		var resp schema.RecordResponse
 		resp.Record = schema.Record{
 			ID:   "1",
@@ -101,7 +87,7 @@ func TestRecordCreate(t *testing.T) {
 
 	as := newAssert(t)
 
-	env.Mux.HandleFunc(pathRecords, func(w http.ResponseWriter, r *http.Request) {
+	env.Mux.HandleFunc(fmt.Sprintf("%s/%s/%s", pathDomains, "1", pathRecords), func(w http.ResponseWriter, r *http.Request) {
 		var body schema.RecordCreateRequest
 		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 			w.WriteHeader(http.StatusUnprocessableEntity)
@@ -143,7 +129,7 @@ func TestRecordUpdate(t *testing.T) {
 
 	as := newAssert(t)
 
-	env.Mux.HandleFunc(fmt.Sprintf("%s/1", pathRecords), func(w http.ResponseWriter, r *http.Request) {
+	env.Mux.HandleFunc(fmt.Sprintf("%s/%s/%s/1", pathDomains, "1", pathRecords), func(w http.ResponseWriter, r *http.Request) {
 		var body schema.RecordCreateRequest
 		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 			w.WriteHeader(http.StatusUnprocessableEntity)
@@ -194,7 +180,7 @@ func TestRecordDelete(t *testing.T) {
 
 	as := newAssert(t)
 
-	env.Mux.HandleFunc(fmt.Sprintf("%s/1", pathRecords), func(w http.ResponseWriter, r *http.Request) {})
+	env.Mux.HandleFunc(fmt.Sprintf("%s/%s/%s/1", pathDomains, "1", pathRecords), func(w http.ResponseWriter, r *http.Request) {})
 
 	rec := &Record{ID: "0"}
 	resp, err := env.Client.Record.Delete(env.Context, rec, RecordUpdateOpts{Domain: &Domain{ID: "1"}})

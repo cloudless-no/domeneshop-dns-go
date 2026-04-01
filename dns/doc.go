@@ -15,7 +15,7 @@
 //	)
 //
 //	func main() {
-//		client := dns.NewClient(dns.WithToken("token"))
+//		client := dns.NewClient(dns.WithCredentials("token", "secret"))
 //
 //		record, _, err := client.Record.GetByID(context.Background(), "randomid")
 //		if err != nil {
