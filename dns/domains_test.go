@@ -15,8 +15,8 @@ func TestDomainList(t *testing.T) {
 
 	env.Mux.HandleFunc(pathDomains, func(w http.ResponseWriter, r *http.Request) {
 		res := schema.DomainListResponse{
-			{ID: "1", Domain: "domeneshop.com"},
-			{ID: "2", Domain: "domeneshop.cloud"},
+			{ID: 1, Domain: "domeneshop.com"},
+			{ID: 2, Domain: "domeneshop.cloud"},
 		}
 
 		if r.URL.Query().Get("domain") != "" {
@@ -44,7 +44,7 @@ func TestDomainGetByID(t *testing.T) {
 
 	env.Mux.HandleFunc(fmt.Sprintf("%s/1", pathDomains), func(w http.ResponseWriter, r *http.Request) {
 		resp := schema.Domain{
-			ID: "1",
+			ID: 1,
 		}
 
 		json.NewEncoder(w).Encode(schema.DomainResponse{ // nolint: errcheck

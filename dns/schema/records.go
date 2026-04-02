@@ -2,12 +2,12 @@ package schema
 
 // Record represents a record in Domeneshop DNS.
 type Record struct {
-	Type     string   `json:"type"`
-	ID       string   `json:"id"`
-	Host     string   `json:"host"`
-	Data     string   `json:"data"`
-	Ttl      int      `json:"ttl"`
-	DomainID   string  `json:"domain_id"`
+	Type     string `json:"type"`
+	ID       int    `json:"id"`
+	Host     string `json:"host"`
+	Data     string `json:"data"`
+	Ttl      int    `json:"ttl"`
+	DomainID int    `json:"domain_id"`
 }
 
 // RecordListResponse is the response when listing records.

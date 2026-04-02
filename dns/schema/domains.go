@@ -12,7 +12,7 @@ type DomainResponse struct {
 
 // Domain represents a domain in Domeneshop DNS.
 type Domain struct {
-	ID              string          `json:"id"`
+	ID              int             `json:"id"`
 	Registered      DnsTime        	`json:"registered_date"`
 	ExpiryDate      DnsTime        	`json:"expiry_date"`
 	Domain          string          `json:"domain"`

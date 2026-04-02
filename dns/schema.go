@@ -1,11 +1,15 @@
 package dns
 
-import "github.com/cloudless-no/domeneshop-dns-go/dns/schema"
+import (
+	"strconv"
+
+	"github.com/cloudless-no/domeneshop-dns-go/dns/schema"
+)
 
 // DomainFromSchema converts schema.Domain to a Domain.
 func DomainFromSchema(s schema.Domain) *Domain {
 	domain := &Domain{
-		ID:             s.ID,
+		ID:             strconv.Itoa(s.ID),
 		Registered:     s.Registered,
 		ExpiryDate:     s.ExpiryDate,
 		Domain:         s.Domain,
@@ -32,12 +36,12 @@ func ServicesFromSchema(s schema.Services) *Services {
 // RecordFromSchema convers a schema.Record to Record
 func RecordFromSchema(s schema.Record) *Record {
 	return &Record{
-		Type:     RecordType(s.Type),
-		ID:       s.ID,
-		Host:     s.Host,
-		Data:    s.Data,
-		Ttl:      s.Ttl,
-		Domain:     &Domain{ID: s.DomainID},
+		Type:   RecordType(s.Type),
+		ID:     strconv.Itoa(s.ID),
+		Host:   s.Host,
+		Data:   s.Data,
+		Ttl:    s.Ttl,
+		Domain: &Domain{ID: strconv.Itoa(s.DomainID)},
 	}
 }
 

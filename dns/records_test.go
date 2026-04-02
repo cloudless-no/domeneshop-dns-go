@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -17,9 +18,9 @@ func TestRecordList(t *testing.T) {
 	as := newAssert(t)
 
 	allRecords := []schema.Record{
-		{ID: "1", Type: "A", Host: "domeneshop.cloud", DomainID: "1"},
-		{ID: "2", Type: "A", Host: "domeneshop.com", DomainID: "2"},
-		{ID: "3", Type: "A", Host: "dns.domeneshop.com", DomainID: "2"},
+		{ID: 1, Type: "A", Host: "domeneshop.cloud", DomainID: 1},
+		{ID: 2, Type: "A", Host: "domeneshop.com", DomainID: 2},
+		{ID: 3, Type: "A", Host: "dns.domeneshop.com", DomainID: 2},
 	}
 
 	// Register a handler for all /domains/{id}/dns paths
@@ -27,7 +28,7 @@ func TestRecordList(t *testing.T) {
 		domainID := strings.Split(r.URL.Path, "/")[2]
 		var records []schema.Record
 		for _, rec := range allRecords {
-			if rec.DomainID == domainID {
+			if strconv.Itoa(rec.DomainID) == domainID {
 				records = append(records, rec)
 			}
 		}
@@ -60,7 +61,7 @@ func TestRecordGetByID(t *testing.T) {
 	env.Mux.HandleFunc(fmt.Sprintf("%s/%s/%s/1", pathDomains, "1", pathRecords), func(w http.ResponseWriter, r *http.Request) {
 		var resp schema.RecordResponse
 		resp.Record = schema.Record{
-			ID:   "1",
+			ID:   1,
 			Host: "domeneshop.com",
 		}
 
@@ -96,7 +97,7 @@ func TestRecordCreate(t *testing.T) {
 
 		var resp schema.RecordResponse
 		resp.Record = schema.Record{
-			ID:   "1",
+			ID:   1,
 			Host: body.Host,
 		}
 
@@ -138,7 +139,7 @@ func TestRecordUpdate(t *testing.T) {
 
 		var resp schema.RecordResponse
 		resp.Record = schema.Record{
-			ID:   "1",
+			ID:   1,
 			Host: body.Host,
 		}
 
