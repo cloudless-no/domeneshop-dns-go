@@ -31,7 +31,7 @@ func TestRecordList(t *testing.T) {
 				records = append(records, rec)
 			}
 		}
-		json.NewEncoder(w).Encode(schema.RecordListResponse{Records: records}) // nolint: errcheck
+		json.NewEncoder(w).Encode(records) // nolint: errcheck
 	})
 
 	cases := []struct {

@@ -14,22 +14,13 @@ func TestDomainList(t *testing.T) {
 	defer env.Teardown()
 
 	env.Mux.HandleFunc(pathDomains, func(w http.ResponseWriter, r *http.Request) {
-		res := schema.DomainListResponse{}
-		res.Domains = []schema.Domain{
-			{
-				ID:   "1",
-				Domain: "domeneshop.com",
-			},
-			{
-				ID:   "2",
-				Domain: "domeneshop.cloud",
-			},
+		res := schema.DomainListResponse{
+			{ID: "1", Domain: "domeneshop.com"},
+			{ID: "2", Domain: "domeneshop.cloud"},
 		}
 
 		if r.URL.Query().Get("domain") != "" {
-			res.Domains = []schema.Domain{
-				res.Domains[0],
-			}
+			res = schema.DomainListResponse{res[0]}
 		}
 
 		json.NewEncoder(w).Encode(res) // nolint: errcheck
