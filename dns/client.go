@@ -14,8 +14,8 @@ import (
 // Client is the client for the Domeneshop DNS API.
 type Client struct {
 	httpClient         *http.Client
-	token           string
-	secret           string
+	username           string
+	password           string
 	endpoint           string
 	debugWriter        io.Writer
 	applicationName    string
@@ -29,11 +29,11 @@ type Client struct {
 // ClientOption is used to configure a client.
 type ClientOption func(*Client)
 
-// WithCredentials configures a client to use the specified token and secret for Basic Auth.
-func WithCredentials(token, secret string) ClientOption {
+// WithCredentials configures a client to use the specified username and password for Basic Auth.
+func WithCredentials(username, password string) ClientOption {
 	return func(client *Client) {
-		client.token = token
-		client.secret = secret
+		client.username = username
+		client.password = password
 	}
 }
 
@@ -97,8 +97,8 @@ func (c *Client) NewRequest(ctx context.Context, method, path string, body io.Re
 	}
 	req.Header.Set("User-Agent", c.userAgent)
 
-	if c.token != "" || c.secret != "" {
-		req.SetBasicAuth(c.token, c.secret)
+	if c.username != "" || c.password != "" {
+		req.SetBasicAuth(c.username, c.password)
 	}
 
 	if body != nil {

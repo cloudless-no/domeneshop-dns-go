@@ -1,10 +1,8 @@
 package schema
 
-// DomainListResponse defines the schema of the response when
-// listing domains.
-type DomainListResponse struct {
-	Domains []Domain `json:"domains"`
-}
+// DomainListResponse is the response when listing domains.
+// The Domeneshop API returns a plain JSON array.
+type DomainListResponse = []Domain
 
 // DomainGetResponse defines the schema of the response when
 // listing domains.

@@ -30,7 +30,7 @@ func newTestEnv() testEnv {
 	server := httptest.NewServer(mux)
 	client := NewClient(
 		WithEndpoint(server.URL),
-		WithCredentials("testuser", "testsecret"),
+		WithCredentials("testuser", "testpassword"),
 		WithApplication("testing", Version),
 	)
 	return testEnv{

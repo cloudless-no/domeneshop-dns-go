@@ -10,11 +10,9 @@ type Record struct {
 	DomainID   string  `json:"domain_id"`
 }
 
-// RecordListResponse defines the schema of the response when
-// listing zones.
-type RecordListResponse struct {
-	Records []Record `json:"records"`
-}
+// RecordListResponse is the response when listing records.
+// The Domeneshop API returns a plain JSON array.
+type RecordListResponse = []Record
 
 // RecordResponse defines the schema of the response when
 // listing zones.

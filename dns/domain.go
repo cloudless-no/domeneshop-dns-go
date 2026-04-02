@@ -56,8 +56,8 @@ func (c DomainClient) List(ctx context.Context) ([]*Domain, *Response, error) {
 		return nil, resp, err
 	}
 
-	domains := make([]*Domain, 0, len(body.Domains))
-	for _, z := range body.Domains {
+	domains := make([]*Domain, 0, len(body))
+	for _, z := range body {
 		domains = append(domains, DomainFromSchema(z))
 	}
 

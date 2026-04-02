@@ -56,8 +56,8 @@ func (c RecordClient) List(ctx context.Context, opts RecordListOpts) ([]*Record,
 		return nil, nil, err
 	}
 
-	records := make([]*Record, 0, len(body.Records))
-	for _, r := range body.Records {
+	records := make([]*Record, 0, len(body))
+	for _, r := range body {
 		records = append(records, RecordFromSchema(r))
 	}
 
