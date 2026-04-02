@@ -26,9 +26,12 @@ type Record struct {
 	Type     RecordType
 	ID       string
 	Host     string
-	Data    string
+	Data     string
 	Ttl      int
-	Domain	 *Domain
+	Domain   *Domain
+	Priority *int
+	Weight   *int
+	Port     *int
 }
 
 // RecordClient is a client for records API.

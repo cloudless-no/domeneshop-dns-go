@@ -36,12 +36,15 @@ func ServicesFromSchema(s schema.Services) *Services {
 // RecordFromSchema convers a schema.Record to Record
 func RecordFromSchema(s schema.Record) *Record {
 	return &Record{
-		Type:   RecordType(s.Type),
-		ID:     strconv.Itoa(s.ID),
-		Host:   s.Host,
-		Data:   s.Data,
-		Ttl:    s.Ttl,
-		Domain: &Domain{ID: strconv.Itoa(s.DomainID)},
+		Type:     RecordType(s.Type),
+		ID:       strconv.Itoa(s.ID),
+		Host:     s.Host,
+		Data:     s.Data,
+		Ttl:      s.Ttl,
+		Domain:   &Domain{ID: strconv.Itoa(s.DomainID)},
+		Priority: s.Priority,
+		Weight:   s.Weight,
+		Port:     s.Port,
 	}
 }
 
