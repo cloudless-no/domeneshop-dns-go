@@ -3,7 +3,7 @@ name: Release on tag
 on:
   push:
     tags:
-      - v*
+      - does_not_work_v*
 
 jobs:
   release:
