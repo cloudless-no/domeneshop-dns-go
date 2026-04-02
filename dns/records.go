@@ -29,9 +29,9 @@ type Record struct {
 	Data     string
 	Ttl      int
 	Domain   *Domain
-	Priority *int
-	Weight   *int
-	Port     *int
+	Priority *string
+	Weight   *string
+	Port     *string
 }
 
 // RecordClient is a client for records API.

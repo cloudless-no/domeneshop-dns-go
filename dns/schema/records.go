@@ -8,9 +8,9 @@ type Record struct {
 	Data     string `json:"data"`
 	Ttl      int    `json:"ttl"`
 	DomainID int    `json:"domain_id"`
-	Priority *int   `json:"priority,omitempty"`
-	Weight   *int   `json:"weight,omitempty"`
-	Port     *int   `json:"port,omitempty"`
+	Priority *string `json:"priority,omitempty"`
+	Weight   *string `json:"weight,omitempty"`
+	Port     *string `json:"port,omitempty"`
 }
 
 // RecordListResponse is the response when listing records.
