@@ -25,8 +25,8 @@ type Domain struct {
 
 // TxtVerification represents the text verification of a domain.
 type Services struct {
-	Registrar 	string 	`json:"registrar"`
+	Registrar 	bool 	`json:"registrar"`
 	DNS 		bool 	`json:"dns"`
 	Email 		bool 	`json:"email"`
-	WebHotel 	bool 	`json:"web_hotel"`
+	WebHotel 	string 	`json:"web_hotel"`
 }

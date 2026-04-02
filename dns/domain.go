@@ -30,10 +30,10 @@ type Domain struct {
 
 // TxtVerification represents the text verification of a domain.
 type Services struct {
-	Registrar 	string 
+	Registrar 	bool
 	DNS 		bool
 	Email 		bool
-	WebHotel 	bool
+	WebHotel 	string
 }
 
 // DomainClient is a client for domains API.
