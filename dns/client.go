@@ -169,7 +169,7 @@ func (c *Client) Do(r *http.Request, v interface{}) (*Response, error) {
 		err = fmt.Errorf("domeneshop-dns: server responded with status code %d", resp.StatusCode)
 		return response, err
 	}
-	if v != nil {
+	if v != nil && len(body) > 0 {
 		if w, ok := v.(io.Writer); ok {
 			_, err = io.Copy(w, bytes.NewReader(body))
 		} else {
