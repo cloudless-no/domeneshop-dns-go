@@ -109,10 +109,21 @@ func (o RecordCreateOpts) validate() error {
 	return nil
 }
 
-// Create creates a new record.
+// Create creates a new record. If a record with the same host, type, and data
+// already exists it is returned without making a new API call.
 func (c RecordClient) Create(ctx context.Context, opts RecordCreateOpts) (*Record, *Response, error) {
 	if err := opts.validate(); err != nil {
 		return nil, nil, err
+	}
+
+	existing, resp, err := c.List(ctx, RecordListOpts{DomainID: opts.Domain.ID})
+	if err != nil {
+		return nil, resp, err
+	}
+	for _, r := range existing {
+		if r.Host == opts.Host && r.Type == opts.Type && r.Data == opts.Data {
+			return r, resp, nil
+		}
 	}
 
 	var reqBody schema.RecordCreateRequest
@@ -132,7 +143,7 @@ func (c RecordClient) Create(ctx context.Context, opts RecordCreateOpts) (*Recor
 	}
 
 	var body schema.RecordResponse
-	resp, err := c.client.Do(req, &body)
+	resp, err = c.client.Do(req, &body)
 	if err != nil {
 		return nil, resp, err
 	}
