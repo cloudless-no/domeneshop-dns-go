@@ -89,6 +89,11 @@ func TestRecordCreate(t *testing.T) {
 	as := newAssert(t)
 
 	env.Mux.HandleFunc(fmt.Sprintf("%s/%s/%s", pathDomains, "1", pathRecords), func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			json.NewEncoder(w).Encode(schema.RecordListResponse{}) // nolint: errcheck
+			return
+		}
+
 		var body schema.RecordCreateRequest
 		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 			w.WriteHeader(http.StatusUnprocessableEntity)
@@ -120,6 +125,37 @@ func TestRecordCreate(t *testing.T) {
 	rec, _, err := env.Client.Record.Create(env.Context, opts)
 	if as.NoError(err) {
 		as.EqStr("1", rec.ID)
+		as.EqStr(opts.Host, rec.Host)
+	}
+}
+
+func TestRecordCreateExisting(t *testing.T) {
+	env := newTestEnv()
+	defer env.Teardown()
+
+	as := newAssert(t)
+
+	existing := schema.Record{ID: 42, Host: "domeneshop.com", Type: "A", Data: "10.0.0.1", DomainID: 1}
+
+	env.Mux.HandleFunc(fmt.Sprintf("%s/%s/%s", pathDomains, "1", pathRecords), func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			json.NewEncoder(w).Encode(schema.RecordListResponse{existing}) // nolint: errcheck
+			return
+		}
+		// POST should never be reached when record already exists.
+		w.WriteHeader(http.StatusInternalServerError)
+	})
+
+	opts := RecordCreateOpts{
+		Host:   "domeneshop.com",
+		Type:   RecordTypeA,
+		Data:   "10.0.0.1",
+		Domain: &Domain{ID: "1"},
+	}
+
+	rec, _, err := env.Client.Record.Create(env.Context, opts)
+	if as.NoError(err) {
+		as.EqStr("42", rec.ID)
 		as.EqStr(opts.Host, rec.Host)
 	}
 }
